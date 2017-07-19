@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html> 
+<head>
+<script src="http://threejs.org/build/three.js"></script>
+<script src="http://threejs.org/examples/js/libs/stats.min.js"></script>
+<script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<h1> Test 3D</h1>
+<script>     var container, stats;
+
+    var camera, scene, renderer, controls;
+    var speed=1.000000000000001;
+
+    var posX, posY, posZ;
+    var direction = new THREE.Vector3(-1, 0, 0);
+
+    var tail, body, head, leftWing, rightWing;
+    var mouseX = 0, mouseY = 0;
+
+    var windowHalfX = window.innerWidth / 2;
+    var windowHalfY = window.innerHeight / 2;
+
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+    init();
+    animate();
+
+    function init() {
+
+        container = document.createElement( 'div' );
+        document.body.appendChild( container );
+
+        camera = new THREE.PerspectiveCamera( 600, window.innerWidth / window.innerHeight, 1, 15000);
+     //  camera.position.set(0,5000,0);
+
+        scene = new THREE.Scene();
+
+            var x,y,z;
+            x=y=z=700;
+           var geometry = new THREE.BoxGeometry(0,0,0);
+            geometry2 = new THREE.BoxGeometry(x,y,z);
+            material2 = new THREE.MeshBasicMaterial( { color: /*Math.random() * */0x000000} );
+        tail = new THREE.Mesh(geometry,material2);
+      // tail.position.set(0,0,0);
+        scene.add(tail);
+        var parent2=tail;
+        // tail
+            for ( i =0; i<10; i++)
+            {
+                x=y=z-=25;
+                 material2 = new THREE.MeshBasicMaterial( { color: /*Math.random() * */0x000000 });
+                 geometry2 = new THREE.BoxGeometry(x,y,z);
+                 object = new THREE.Mesh(geometry2,material2);
+                object.position.x=-x-25;
+                parent2.add(object);
+              //  first.add(object);
+                parent2=object;
+              //  first=parent2;
+            }
+                body = parent2;
+              //  tail2=parent2;
+               camera.position.set( -7000*1.01, 700*1.01, 4000*1.01 ).add(tail.position.clone());
+                 var parent3 = body;
+    // left block
+                 material2 = new THREE.MeshBasicMaterial( { color:/* Math.random()* */ 0x990000 });
+                 geometry2 = new THREE.BoxGeometry(x+50,y+50,z+50);
+                 object = new THREE.Mesh(geometry2,material2);
+
+                object.position.x=-x;
+                object.position.y=-y+200;
+                parent3.add(object);
+                //parent3=object;
+        // right block
+                 material2 = new THREE.MeshBasicMaterial( { color:/* Math.random()**/ 0x990000 });
+                 geometry2 = new THREE.BoxGeometry(x+50,y+50,z+50);
+                 object = new THREE.Mesh(geometry2,material2);
+                parent3=body;
+                object.position.x=-x;
+                object.position.y=y-200;
+                parent3.add(object);
+                //parent3=object;
+                parent3=body;
+                 material2 = new THREE.MeshBasicMaterial( { color: /* Math.random()* */ 0x990000 });
+                 geometry2 = new THREE.BoxGeometry(x-200,y+200,z);
+                 object = new THREE.Mesh(geometry2,material2);
+                object.position.x=-x*2+75;
+                parent3.add(object);
+                parent3=object;
+                body = parent3;
+                x-=200;
+        for ( i = 0; i<3; i++) {
+             material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000 });
+             geometry2 = new THREE.BoxGeometry(x-100, y+50, z);
+             object = new THREE.Mesh(geometry2, material2);
+            if (i==0) {
+                object.position.x = -x + 50;
+                object.position.y = -y + 200;
+            }
+            else
+                object.position.x = -x+100;
+
+            parent3.add(object);
+            parent3 = object;
+        }
+        leftWing = parent3;
+        parent3 = body;
+        for ( i = 0; i<3; i++) {
+             material2 = new THREE.MeshBasicMaterial({color:/* Math.random() * */ 0x990000 });
+             geometry2 = new THREE.BoxGeometry(x-100, y+50, z);
+             object = new THREE.Mesh(geometry2, material2);
+            if (i==0) {
+                object.position.x = -x + 50;
+                object.position.y = +y - 190;
+            }
+            else
+                object.position.x = -x+100;
+
+            parent3.add(object);
+            parent3 = object;
+        }
+        head = parent3;
+        rightWing = parent3;
+        var parent4, parent5, parent6; // parent4 = head parent5 = left
+        parent4 = head;
+        parent5 = leftWing;
+        parent6 = rightWing;
+
+        for ( i =0; i<6; i++) {
+             material2 = new THREE.MeshBasicMaterial({color: /* Math.random() * */ 0x808080 });
+             geometry2 = new THREE.BoxGeometry(x - 150, y - 100, z);
+             object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+
+            object.position.x = -x + 125;
+            object.position.y = -250;
+              }
+              else
+            {
+                object.position.x=-x+150;
+            }
+            parent4.add(object);
+            parent4 = object;
+        }
+         material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x808080 });
+         geometry2 = new THREE.BoxGeometry(x-100, y, z);
+         object = new THREE.Mesh(geometry2, material2);
+        object.position.x=-x+125;
+        parent4.add(object);
+        parent4 = object;
+         material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x808080});
+         geometry2 = new THREE.BoxGeometry(x-160, y-150, z);
+         object = new THREE.Mesh(geometry2, material2);
+        object.position.z=+50;
+        object.position.x=-10;
+        parent4.add(object);
+         material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x808080});
+         geometry2 = new THREE.BoxGeometry(x, y-200, z-200);
+         object = new THREE.Mesh(geometry2, material2);
+        object.position.x=-x+50;
+        parent4.add(object);
+
+// parent5 = left wing parent6 = right wing
+    //first section wings
+        for (i =0; i<3; i++) {
+             material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+             geometry2 = new THREE.BoxGeometry(x-100, y-150 , z);
+             object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+
+                object.position.y = -y+50;
+
+            }
+            else {
+
+            object.position.y = -y+150;
+             }
+            parent5.add(object);
+            parent5=object;
+        }
+         material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+         geometry2 = new THREE.BoxGeometry(x-100, y , z);
+         object = new THREE.Mesh(geometry2, material2);
+       /// object.position.x=+x;
+        object.position.y=-y+40;
+        parent5.add(object);
+        parent5=object;
+        material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+        geometry2 = new THREE.BoxGeometry(x+50, y , z);
+        object = new THREE.Mesh(geometry2, material2);
+        object.position.x=x-25;
+        parent5.add(object);
+        parent5=object;
+        posX = parent5.position.x;
+        posY = parent5.position.y;
+        posZ = parent5.position.z;
+        for (var i =0; i<3; i++) {
+             material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+             geometry2 = new THREE.BoxGeometry(x+50, y-150 , z);
+             object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+
+                object.position.y = y;
+
+            }
+            else {
+
+                object.position.y = y-175;
+            }
+            parent5.add(object);
+            parent5=object;
+        }
+        var material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+        var geometry2 = new THREE.BoxGeometry(x+50, y , z);
+        var object = new THREE.Mesh(geometry2, material2);
+
+        object.position.y=y-1450;
+        object.position.x=x+50;
+        parent5.add(object);
+        parent5=object;
+
+        material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+        geometry2 = new THREE.BoxGeometry(x-100, y-100 , z);
+        object = new THREE.Mesh(geometry2, material2);
+        object.position.y=y-25;
+        object.position.x=-75;
+        parent5.add(object);
+
+        for ( i=0; i<3; i++)
+        {
+             material2 = new THREE.MeshBasicMaterial({color:        /* Math.random() **/ 0x990000});
+             geometry2 = new THREE.BoxGeometry(x+50, y-100 , z);
+            if (i==2)
+                 geometry2 = new THREE.BoxGeometry(x-100, y-100 , z);
+             object = new THREE.Mesh(geometry2, material2);
+            if (i==0)
+            object.position.y=-y+25;
+            else if (i==1) {
+                object.position.x = -x-55;
+            }
+            else {
+                object.position.x = -x+25;
+            }
+            parent5.add(object);
+            parent5=object;
+        }
+         material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+         geometry2 = new THREE.BoxGeometry(x-100, y , z);
+         object = new THREE.Mesh(geometry2, material2);
+         object.position.y=-y+25;
+         object.position.x=-80;
+         parent5.add(object);
+         parent5=object;
+
+        for ( i=0; i<3; i++)
+        {
+            material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x-65, y , z);
+            object = new THREE.Mesh(geometry2, material2);
+            object.position.x=x-65;
+            parent5.add(object);
+            parent5=object;
+        }
+        for ( i=0; i<4; i++)
+        {
+            material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x-65, y , z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i==0)
+            {
+                object.position.y=-y;
+            }
+            else
+            {
+                object.position.x=-x+75;
+            }
+          //  object.position.x=-x;
+            parent5.add(object);
+            parent5=object;
+        }
+        for ( i=0; i<4; i++)
+        {
+            material2 = new THREE.MeshBasicMaterial({color:         /* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x-65, y , z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i==0)
+            {
+                object.position.y=-y;
+            }
+            else
+            {
+                object.position.x=x-75;
+            }
+            //  object.position.x=-x;
+            parent5.add(object);
+            parent5=object;
+        }
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65, y+100 , z);
+        object = new THREE.Mesh(geometry2, material2);
+        object.position.y=-y-40;
+        parent5.add(object);
+        parent5=object;
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65, y+250 , z);
+        object = new THREE.Mesh(geometry2, material2);
+        object.position.x=-x+75;
+        object.position.y=-100;
+        parent5.add(object);
+        parent5=object;
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65, y+400 , z);
+        object = new THREE.Mesh(geometry2, material2);
+        object.position.x=-x+75;
+        object.position.y=-100;
+        parent5.add(object);
+        parent5=object;
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65, y+550 , z);
+        object = new THREE.Mesh(geometry2, material2);
+        object.position.x=-x+75;
+        object.position.y=-100;
+        parent5.add(object);
+        //parent5=object;
+
+
+        for ( i=0; i<2; i++) {
+            material2 = new THREE.MeshBasicMaterial({color:/* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x - 100, y, z);
+            if (i==1)
+                geometry2 = new THREE.BoxGeometry(x+50, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+            object.position.y = y;
+           // object.position.x = x;
+            }
+            else{
+               object.position.x=x-25;
+            }
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<2; i++) {
+            material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x - 100, y, z);
+            if (i==1)
+                geometry2 = new THREE.BoxGeometry(x+50, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+                object.position.y = y;
+                 object.position.x = x-175;
+            }
+            else{
+                object.position.x=-x+25;
+            }
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<3; i++) {
+            material2 = new THREE.MeshBasicMaterial({color:/* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x+50, y, z);
+            if (i==1)
+                geometry2 = new THREE.BoxGeometry(x-100, y, z);
+            if (i==2)
+                geometry2 = new THREE.BoxGeometry(x-100, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+                object.position.y = y;
+          //       object.position.x = x;
+            }
+            else if (i==1){
+               object.position.x=x-25;
+            }
+            else if (i==2)
+            {
+                object.position.x=x-100;
+            }
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<3; i++) {
+            material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000});
+            if (i == 0)
+                geometry2 = new THREE.BoxGeometry(x + 75, y, z);
+            else if (i==1)
+            {
+                geometry2 = new THREE.BoxGeometry(x -25, y, z)
+            }
+            else
+                geometry2 = new THREE.BoxGeometry(x -40, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            //object.position.x=-x+75;
+            if (i == 0) {
+
+            object.position.y = y;
+            object.position.x = + 75;
+        }
+        else if (i==1){
+                object.position.x=-x-25;
+            }
+            else if (i==2)
+            {
+                object.position.x=-x+25;
+            }
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<3; i++) {
+            material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000});
+            geometry2 = new THREE.BoxGeometry(x - 50, y, z);
+            if (i==1)
+                geometry2 = new THREE.BoxGeometry(x, y, z);
+            if (i==2)
+                geometry2 = new THREE.BoxGeometry(x+75, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+                object.position.y = y;
+                // object.position.x = x;
+            }
+            else if (i==1){
+                object.position.x=x-25;
+            }
+            else if (i==2)
+            {
+                object.position.x=x+25;
+            }
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<4; i++) {
+            material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000});
+            if (i==0)
+            geometry2 = new THREE.BoxGeometry(x - 50, y, z);
+            else
+                geometry2 = new THREE.BoxGeometry(x - 75, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+            object.position.y = y;
+                object.position.x=-50;
+        }
+        else{
+            object.position.x=-x+75;
+            }
+           // object.position.x=-x+25;
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<4; i++) {
+            material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000});
+            if (i==0)
+                geometry2 = new THREE.BoxGeometry(x - 50, y, z);
+            else
+                geometry2 = new THREE.BoxGeometry(x - 75, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+                object.position.y = y;
+
+            }
+            else{
+                object.position.x=x-75;
+            }
+            // object.position.x=-x+25;
+            parent6.add(object);
+            parent6=object;
+        }
+        for ( i=0; i<4; i++) {
+            material2 = new THREE.MeshBasicMaterial({color: /* Math.random() **/ 0x990000});
+            if (i==0)
+                geometry2 = new THREE.BoxGeometry(x - 50, y, z);
+            else
+                geometry2 = new THREE.BoxGeometry(x - 75, y, z);
+            object = new THREE.Mesh(geometry2, material2);
+            if (i == 0) {
+                object.position.y = y;
+
+            }
+            else{
+                object.position.x=-x+75;
+            }
+            // object.position.x=-x+25;
+            parent6.add(object);
+            parent6=object;
+        }
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65 , y+550, z);
+        object = new THREE.Mesh(geometry2,material2);
+        object.position.y=y+250;
+        parent6.add(object);
+        parent6=object;
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65 , y+400, z);
+        object = new THREE.Mesh(geometry2,material2);
+        object.position.x=+175;
+        object.position.y=-50;
+        parent6.add(object);
+        parent6=object;
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65 , y+250, z);
+        object = new THREE.Mesh(geometry2,material2);
+        object.position.x=+175;
+        object.position.y=-75;
+        parent6.add(object);
+        parent6=object;
+        material2 = new THREE.MeshBasicMaterial({color: /*Math.random() * */0x808080});
+        geometry2 = new THREE.BoxGeometry(x-65 , y+100, z);
+        object = new THREE.Mesh(geometry2,material2);
+        object.position.x=+175;
+        object.position.y=-100;
+        parent6.add(object);
+      //  parent6=object;
+
+
+
+
+        //rightWing.rotateY(3.1);
+
+
+
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x66CCCC );
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.sortObjects = false;
+        container.appendChild( renderer.domElement );
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        stats = new Stats();
+        container.appendChild( stats.dom );
+
+        //
+        window.addEventListener( 'resize', onWindowResize, false );
+
+    }
+    function onWindowResize() {
+
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+
+    //    camera.aspect = window.innerWidth / window.innerHeight;
+     //   camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+    }
+
+    function onDocumentMouseMove(event) {
+
+        mouseX = ( event.clientX - windowHalfX ) * 10;
+        mouseY = ( event.clientY - windowHalfY ) * 10;
+
+    }
+    //
+    function animate() {
+        move();
+        requestAnimationFrame( animate );
+        render();
+        stats.update();
+       // controls.update();
+    //    controls.update();
+
+    }
+
+    function move() {
+
+        var vector = direction.clone().multiplyScalar(speed);
+        tail.position.x += vector.x;
+        tail.position.y += vector.y;
+        tail.position.z += vector.z;
+        speed = speed * 1.001;
+    }
+
+    function render() {
+
+        var time = Date.now() * 0.001;
+        var rx = Math.sin( time * .8 ) * 0.05;
+
+       // camera.position.x += ( mouseX - camera.position.x ) * .05;
+       // camera.position.y += ( - mouseY - camera.position.y ) * .05;
+    //   camera.lookAt( vector);
+
+
+        //root.traverse( function ( object ) {
+
+            //object.rotation.x = rx;
+            //object.rotation.y = ry;
+            //object.rotation.z = rz;
+             //   object.translateY(40);
+       // } );
+       // rightWing.rotateY(3.1);
+        rightWing.traverse( function ( object ) {
+
+            leftWing.traverse( function ( object ) {
+                //  object.rotateZ(1);
+                object.rotation.x = rx;
+                //        object.rotation.y = ry;
+                //  object.rotation.z = rz;
+                //   object.translateY(40);
+            } );
+          //  object.rotateZ(1);
+           object.rotation.x = -rx;
+          //  object.rotation.y = ry;
+         //   object.rotation.z = rz;
+            //   object.translateY(40);
+       } );
+        camera.lookAt(body);
+       // tail.updateMatrix();
+       // tail.translate( 0, 0, 0 );
+        renderer.render( scene, camera );
+
+    }
+    </script>
+
+</body>
+</html>
